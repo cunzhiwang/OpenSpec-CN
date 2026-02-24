@@ -1,31 +1,31 @@
-# Concepts
+# 核心概念
 
-This guide explains the core ideas behind OpenSpec and how they fit together. For practical usage, see [Getting Started](getting-started.md) and [Workflows](workflows.md).
+本指南解释 OpenSpec 背后的核心理念以及它们如何协同工作。有关实际使用，请参阅 [快速开始](getting-started.md) 和 [工作流](workflows.md)。
 
-## Philosophy
+## 设计理念
 
-OpenSpec is built around four principles:
+OpenSpec 基于四个原则构建：
 
 ```
-fluid not rigid       — no phase gates, work on what makes sense
-iterative not waterfall — learn as you build, refine as you go
-easy not complex      — lightweight setup, minimal ceremony
-brownfield-first      — works with existing codebases, not just greenfield
+灵活而非僵化    — 没有阶段门限，按需工作
+迭代而非瀑布    — 边构建边学习，边推进边优化
+简单而非复杂    — 轻量级设置，最少仪式感
+棕地优先       — 适用于现有代码库，而不仅仅是绿地项目
 ```
 
-### Why These Principles Matter
+### 为什么这些原则很重要
 
-**Fluid not rigid.** Traditional spec systems lock you into phases: first you plan, then you implement, then you're done. OpenSpec is more flexible — you can create artifacts in any order that makes sense for your work.
+**灵活而非僵化。** 传统的规范系统将您锁定在各个阶段：先规划，再实现，然后完成。OpenSpec 更加灵活 — 您可以按照对工作有意义的任何顺序创建制品。
 
-**Iterative not waterfall.** Requirements change. Understanding deepens. What seemed like a good approach at the start might not hold up after you see the codebase. OpenSpec embraces this reality.
+**迭代而非瀑布。** 需求会变化。理解会加深。开始时看起来不错的方法在查看代码库后可能不再适用。OpenSpec 接受这一现实。
 
-**Easy not complex.** Some spec frameworks require extensive setup, rigid formats, or heavyweight processes. OpenSpec stays out of your way. Initialize in seconds, start working immediately, customize only if you need to.
+**简单而非复杂。** 一些规范框架需要大量设置、严格的格式或繁重的流程。OpenSpec 不会妨碍您。秒级初始化，立即开始工作，只在需要时自定义。
 
-**Brownfield-first.** Most software work isn't building from scratch — it's modifying existing systems. OpenSpec's delta-based approach makes it easy to specify changes to existing behavior, not just describe new systems.
+**棕地优先。** 大多数软件工作不是从头构建 — 而是修改现有系统。OpenSpec 基于增量的方法使得指定现有行为的变更变得容易，而不仅仅是描述新系统。
 
-## The Big Picture
+## 整体架构
 
-OpenSpec organizes your work into two main areas:
+OpenSpec 将您的工作组织到两个主要区域：
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -34,264 +34,264 @@ OpenSpec organizes your work into two main areas:
 │   ┌─────────────────────┐      ┌──────────────────────────────┐ │
 │   │       specs/        │      │         changes/              │ │
 │   │                     │      │                               │ │
-│   │  Source of truth    │◄─────│  Proposed modifications       │ │
-│   │  How your system    │ merge│  Each change = one folder     │ │
-│   │  currently works    │      │  Contains artifacts + deltas  │ │
+│   │  真相来源          │◄─────│  建议的修改                    │ │
+│   │  描述系统当前      │ merge│  每个变更 = 一个文件夹         │ │
+│   │  如何工作          │      │  包含制品 + 增量规范           │ │
 │   │                     │      │                               │ │
 │   └─────────────────────┘      └──────────────────────────────┘ │
 │                                                                  │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-**Specs** are the source of truth — they describe how your system currently behaves.
+**规范** 是真相来源 — 它们描述系统当前的行为方式。
 
-**Changes** are proposed modifications — they live in separate folders until you're ready to merge them.
+**变更** 是建议的修改 — 它们存放在单独的文件夹中，直到您准备好合并它们。
 
-This separation is key. You can work on multiple changes in parallel without conflicts. You can review a change before it affects the main specs. And when you archive a change, its deltas merge cleanly into the source of truth.
+这种分离是关键。您可以并行处理多个变更而不会冲突。您可以在变更影响主规范之前审查它。当您归档变更时，其增量规范会干净地合并到真相来源中。
 
-## Specs
+## 规范
 
-Specs describe your system's behavior using structured requirements and scenarios.
+规范使用结构化的需求和场景描述系统的行为。
 
-### Structure
+### 结构
 
 ```
 openspec/specs/
 ├── auth/
-│   └── spec.md           # Authentication behavior
+│   └── spec.md           # 认证行为
 ├── payments/
-│   └── spec.md           # Payment processing
+│   └── spec.md           # 支付处理
 ├── notifications/
-│   └── spec.md           # Notification system
+│   └── spec.md           # 通知系统
 └── ui/
-    └── spec.md           # UI behavior and themes
+    └── spec.md           # UI 行为和主题
 ```
 
-Organize specs by domain — logical groupings that make sense for your system. Common patterns:
+按领域组织规范 — 对您的系统有意义的逻辑分组。常见模式：
 
-- **By feature area**: `auth/`, `payments/`, `search/`
-- **By component**: `api/`, `frontend/`, `workers/`
-- **By bounded context**: `ordering/`, `fulfillment/`, `inventory/`
+- **按功能区域**: `auth/`、`payments/`、`search/`
+- **按组件**: `api/`、`frontend/`、`workers/`
+- **按限界上下文**: `ordering/`、`fulfillment/`、`inventory/`
 
-### Spec Format
+### 规范格式
 
-A spec contains requirements, and each requirement has scenarios:
+规范包含需求，每个需求有场景：
 
 ```markdown
-# Auth Specification
+# Auth 规范
 
-## Purpose
-Authentication and session management for the application.
+## 目的
+应用程序的认证和会话管理。
 
-## Requirements
+## 需求
 
-### Requirement: User Authentication
-The system SHALL issue a JWT token upon successful login.
+### 需求：用户认证
+系统应该在成功登录后颁发 JWT 令牌。
 
-#### Scenario: Valid credentials
-- GIVEN a user with valid credentials
-- WHEN the user submits login form
-- THEN a JWT token is returned
-- AND the user is redirected to dashboard
+#### 场景：有效凭据
+- 假设 用户具有有效凭据
+- 当 用户提交登录表单
+- 那么 返回 JWT 令牌
+- 并且 用户被重定向到仪表板
 
-#### Scenario: Invalid credentials
-- GIVEN invalid credentials
-- WHEN the user submits login form
-- THEN an error message is displayed
-- AND no token is issued
+#### 场景：无效凭据
+- 假设 无效凭据
+- 当 用户提交登录表单
+- 那么 显示错误消息
+- 并且 不颁发令牌
 
-### Requirement: Session Expiration
-The system MUST expire sessions after 30 minutes of inactivity.
+### 需求：会话过期
+系统必须在 30 分钟不活动后使会话过期。
 
-#### Scenario: Idle timeout
-- GIVEN an authenticated session
-- WHEN 30 minutes pass without activity
-- THEN the session is invalidated
-- AND the user must re-authenticate
+#### 场景：空闲超时
+- 假设 一个已认证的会话
+- 当 30 分钟内没有活动
+- 那么 会话失效
+- 并且 用户必须重新认证
 ```
 
-**Key elements:**
+**关键元素：**
 
-| Element | Purpose |
+| 元素 | 用途 |
 |---------|---------|
-| `## Purpose` | High-level description of this spec's domain |
-| `### Requirement:` | A specific behavior the system must have |
-| `#### Scenario:` | A concrete example of the requirement in action |
-| SHALL/MUST/SHOULD | RFC 2119 keywords indicating requirement strength |
+| `## 目的` | 此规范领域的高级描述 |
+| `### 需求:` | 系统必须具有的特定行为 |
+| `#### 场景:` | 需求在实际中的具体示例 |
+| SHALL/MUST/SHOULD | RFC 2119 关键词，表示需求强度 |
 
-### Why Structure Specs This Way
+### 为什么这样构建规范
 
-**Requirements are the "what"** — they state what the system should do without specifying implementation.
+**需求是"什么"** — 它们说明系统应该做什么，而不指定实现。
 
-**Scenarios are the "when"** — they provide concrete examples that can be verified. Good scenarios:
-- Are testable (you could write an automated test for them)
-- Cover both happy path and edge cases
-- Use Given/When/Then or similar structured format
+**场景是"何时"** — 它们提供可以验证的具体示例。好的场景：
+- 可测试（您可以为它们编写自动化测试）
+- 覆盖正常路径和边缘情况
+- 使用 Given/When/Then 或类似的结构化格式
 
-**RFC 2119 keywords** (SHALL, MUST, SHOULD, MAY) communicate intent:
-- **MUST/SHALL** — absolute requirement
-- **SHOULD** — recommended, but exceptions exist
-- **MAY** — optional
+**RFC 2119 关键词**（SHALL、MUST、SHOULD、MAY）传达意图：
+- **MUST/SHALL** — 绝对要求
+- **SHOULD** — 推荐，但存在例外
+- **MAY** — 可选
 
-### What a Spec Is (and Is Not)
+### 规范是什么（以及不是什么）
 
-A spec is a **behavior contract**, not an implementation plan.
+规范是**行为契约**，而不是实现计划。
 
-Good spec content:
-- Observable behavior users or downstream systems rely on
-- Inputs, outputs, and error conditions
-- External constraints (security, privacy, reliability, compatibility)
-- Scenarios that can be tested or explicitly validated
+规范内容应包含：
+- 用户或下游系统依赖的可观察行为
+- 输入、输出和错误条件
+- 外部约束（安全性、隐私、可靠性、兼容性）
+- 可以测试或明确验证的场景
 
-Avoid in specs:
-- Internal class/function names
-- Library or framework choices
-- Step-by-step implementation details
-- Detailed execution plans (those belong in `design.md` or `tasks.md`)
+规范中应避免：
+- 内部类/函数名称
+- 库或框架选择
+- 逐步实现细节
+- 详细执行计划（这些属于 `design.md` 或 `tasks.md`）
 
-Quick test:
-- If implementation can change without changing externally visible behavior, it likely does not belong in the spec.
+快速测试：
+- 如果实现可以更改而不更改外部可见行为，它可能不属于规范。
 
-### Keep It Lightweight: Progressive Rigor
+### 保持轻量：渐进式严格
 
-OpenSpec aims to avoid bureaucracy. Use the lightest level that still makes the change verifiable.
+OpenSpec 旨在避免官僚主义。使用仍能使变更可验证的最轻量级别。
 
-**Lite spec (default):**
-- Short behavior-first requirements
-- Clear scope and non-goals
-- A few concrete acceptance checks
+**轻量规范（默认）：**
+- 简短的行为优先需求
+- 清晰的范围和非目标
+- 几个具体的验收检查
 
-**Full spec (for higher risk):**
-- Cross-team or cross-repo changes
-- API/contract changes, migrations, security/privacy concerns
-- Changes where ambiguity is likely to cause expensive rework
+**完整规范（用于更高风险）：**
+- 跨团队或跨仓库变更
+- API/契约变更、迁移、安全/隐私问题
+- 模糊性可能导致昂贵返工的变更
 
-Most changes should stay in Lite mode.
+大多数变更应保持在轻量模式。
 
-### Human + Agent Collaboration
+### 人机协作
 
-In many teams, humans explore and agents draft artifacts. The intended loop is:
+在许多团队中，人类探索而智能体起草制品。预期的循环是：
 
-1. Human provides intent, context, and constraints.
-2. Agent converts this into behavior-first requirements and scenarios.
-3. Agent keeps implementation detail in `design.md` and `tasks.md`, not `spec.md`.
-4. Validation confirms structure and clarity before implementation.
+1. 人类提供意图、上下文和约束。
+2. 智能体将其转换为行为优先的需求和场景。
+3. 智能体将实现细节保存在 `design.md` 和 `tasks.md` 中，而不是 `spec.md`。
+4. 验证在实现前确认结构和清晰度。
 
-This keeps specs readable for humans and consistent for agents.
+这使规范对人类可读，对智能体一致。
 
-## Changes
+## 变更
 
-A change is a proposed modification to your system, packaged as a folder with everything needed to understand and implement it.
+变更是对系统的建议修改，打包为包含理解和实现所需一切的文件夹。
 
-### Change Structure
+### 变更结构
 
 ```
 openspec/changes/add-dark-mode/
-├── proposal.md           # Why and what
-├── design.md             # How (technical approach)
-├── tasks.md              # Implementation checklist
-├── .openspec.yaml        # Change metadata (optional)
-└── specs/                # Delta specs
+├── proposal.md           # 为什么和是什么
+├── design.md             # 如何（技术方案）
+├── tasks.md              # 实现清单
+├── .openspec.yaml        # 变更元数据（可选）
+└── specs/                # 增量规范
     └── ui/
-        └── spec.md       # What's changing in ui/spec.md
+        └── spec.md       # ui/spec.md 中的变更
 ```
 
-Each change is self-contained. It has:
-- **Artifacts** — documents that capture intent, design, and tasks
-- **Delta specs** — specifications for what's being added, modified, or removed
-- **Metadata** — optional configuration for this specific change
+每个变更都是自包含的。它有：
+- **制品** — 捕获意图、设计和任务的文档
+- **增量规范** — 正在添加、修改或删除的规范
+- **元数据** — 此特定变更的可选配置
 
-### Why Changes Are Folders
+### 为什么变更是文件夹
 
-Packaging a change as a folder has several benefits:
+将变更打包为文件夹有几个好处：
 
-1. **Everything together.** Proposal, design, tasks, and specs live in one place. No hunting through different locations.
+1. **所有内容在一起。** 提案、设计、任务和规范都在一个地方。不需要在不同位置搜索。
 
-2. **Parallel work.** Multiple changes can exist simultaneously without conflicting. Work on `add-dark-mode` while `fix-auth-bug` is also in progress.
+2. **并行工作。** 多个变更可以同时存在而不冲突。在处理 `add-dark-mode` 的同时也可以进行 `fix-auth-bug`。
 
-3. **Clean history.** When archived, changes move to `changes/archive/` with their full context preserved. You can look back and understand not just what changed, but why.
+3. **清晰的历史。** 归档后，变更会移动到 `changes/archive/`，完整上下文被保留。您可以回顾并理解不仅是什么改变了，还有为什么。
 
-4. **Review-friendly.** A change folder is easy to review — open it, read the proposal, check the design, see the spec deltas.
+4. **便于审查。** 变更文件夹很容易审查 — 打开它，阅读提案，检查设计，查看规范增量。
 
-## Artifacts
+## 制品
 
-Artifacts are the documents within a change that guide the work.
+制品是变更中指导工作的文档。
 
-### The Artifact Flow
+### 制品流程
 
 ```
 proposal ──────► specs ──────► design ──────► tasks ──────► implement
     │               │             │              │
-   why            what           how          steps
- + scope        changes       approach      to take
+   为什么          什么           如何          步骤
+ + 范围          变更           方案          执行
 ```
 
-Artifacts build on each other. Each artifact provides context for the next.
+制品相互建立。每个制品为下一个提供上下文。
 
-### Artifact Types
+### 制品类型
 
-#### Proposal (`proposal.md`)
+#### 提案 (`proposal.md`)
 
-The proposal captures **intent**, **scope**, and **approach** at a high level.
+提案捕获高层次的**意图**、**范围**和**方案**。
 
 ```markdown
-# Proposal: Add Dark Mode
+# 提案：添加深色模式
 
-## Intent
-Users have requested a dark mode option to reduce eye strain
-during nighttime usage and match system preferences.
+## 意图
+用户请求深色模式选项，以减少夜间使用时的眼睛疲劳
+并匹配系统偏好。
 
-## Scope
-In scope:
-- Theme toggle in settings
-- System preference detection
-- Persist preference in localStorage
+## 范围
+包含：
+- 设置中的主题切换
+- 系统偏好检测
+- 在 localStorage 中持久化偏好
 
-Out of scope:
-- Custom color themes (future work)
-- Per-page theme overrides
+不包含：
+- 自定义颜色主题（未来工作）
+- 每页主题覆盖
 
-## Approach
-Use CSS custom properties for theming with a React context
-for state management. Detect system preference on first load,
-allow manual override.
+## 方案
+使用 CSS 自定义属性进行主题设置，React context
+用于状态管理。首次加载时检测系统偏好，
+允许手动覆盖。
 ```
 
-**When to update the proposal:**
-- Scope changes (narrowing or expanding)
-- Intent clarifies (better understanding of the problem)
-- Approach fundamentally shifts
+**何时更新提案：**
+- 范围变更（缩小或扩大）
+- 意图澄清（更好地理解问题）
+- 方案根本性改变
 
-#### Specs (delta specs in `specs/`)
+#### 规范（`specs/` 中的增量规范）
 
-Delta specs describe **what's changing** relative to the current specs. See [Delta Specs](#delta-specs) below.
+增量规范描述相对于当前规范**正在变更什么**。见下面的 [增量规范](#增量规范)。
 
-#### Design (`design.md`)
+#### 设计 (`design.md`)
 
-The design captures **technical approach** and **architecture decisions**.
+设计捕获**技术方案**和**架构决策**。
 
 ```markdown
-# Design: Add Dark Mode
+# 设计：添加深色模式
 
-## Technical Approach
-Theme state managed via React Context to avoid prop drilling.
-CSS custom properties enable runtime switching without class toggling.
+## 技术方案
+通过 React Context 管理主题状态以避免 prop 钻取。
+CSS 自定义属性实现无需类切换的运行时切换。
 
-## Architecture Decisions
+## 架构决策
 
-### Decision: Context over Redux
-Using React Context for theme state because:
-- Simple binary state (light/dark)
-- No complex state transitions
-- Avoids adding Redux dependency
+### 决策：Context 而非 Redux
+使用 React Context 管理主题状态，因为：
+- 简单的二元状态（浅色/深色）
+- 没有复杂的状态转换
+- 避免添加 Redux 依赖
 
-### Decision: CSS Custom Properties
-Using CSS variables instead of CSS-in-JS because:
-- Works with existing stylesheet
-- No runtime overhead
-- Browser-native solution
+### 决策：CSS 自定义属性
+使用 CSS 变量而非 CSS-in-JS，因为：
+- 与现有样式表兼容
+- 无运行时开销
+- 浏览器原生解决方案
 
-## Data Flow
+## 数据流
 ```
 ThemeProvider (context)
        │
@@ -299,116 +299,116 @@ ThemeProvider (context)
 ThemeToggle ◄──► localStorage
        │
        ▼
-CSS Variables (applied to :root)
+CSS Variables (应用到 :root)
 ```
 
-## File Changes
-- `src/contexts/ThemeContext.tsx` (new)
-- `src/components/ThemeToggle.tsx` (new)
-- `src/styles/globals.css` (modified)
+## 文件变更
+- `src/contexts/ThemeContext.tsx`（新建）
+- `src/components/ThemeToggle.tsx`（新建）
+- `src/styles/globals.css`（修改）
 ```
 
-**When to update the design:**
-- Implementation reveals the approach won't work
-- Better solution discovered
-- Dependencies or constraints change
+**何时更新设计：**
+- 实现表明方案不可行
+- 发现更好的解决方案
+- 依赖或约束变更
 
-#### Tasks (`tasks.md`)
+#### 任务 (`tasks.md`)
 
-Tasks are the **implementation checklist** — concrete steps with checkboxes.
+任务是**实现清单** — 带复选框的具体步骤。
 
 ```markdown
-# Tasks
+# 任务
 
-## 1. Theme Infrastructure
-- [ ] 1.1 Create ThemeContext with light/dark state
-- [ ] 1.2 Add CSS custom properties for colors
-- [ ] 1.3 Implement localStorage persistence
-- [ ] 1.4 Add system preference detection
+## 1. 主题基础设施
+- [ ] 1.1 创建带 light/dark 状态的 ThemeContext
+- [ ] 1.2 为颜色添加 CSS 自定义属性
+- [ ] 1.3 实现 localStorage 持久化
+- [ ] 1.4 添加系统偏好检测
 
-## 2. UI Components
-- [ ] 2.1 Create ThemeToggle component
-- [ ] 2.2 Add toggle to settings page
-- [ ] 2.3 Update Header to include quick toggle
+## 2. UI 组件
+- [ ] 2.1 创建 ThemeToggle 组件
+- [ ] 2.2 在设置页面添加切换
+- [ ] 2.3 更新 Header 包含快速切换
 
-## 3. Styling
-- [ ] 3.1 Define dark theme color palette
-- [ ] 3.2 Update components to use CSS variables
-- [ ] 3.3 Test contrast ratios for accessibility
+## 3. 样式
+- [ ] 3.1 定义深色主题调色板
+- [ ] 3.2 更新组件使用 CSS 变量
+- [ ] 3.3 测试对比度以确保可访问性
 ```
 
-**Task best practices:**
-- Group related tasks under headings
-- Use hierarchical numbering (1.1, 1.2, etc.)
-- Keep tasks small enough to complete in one session
-- Check tasks off as you complete them
+**任务最佳实践：**
+- 在标题下分组相关任务
+- 使用分层编号（1.1、1.2 等）
+- 保持任务足够小，可以在一个会话中完成
+- 完成后勾选任务
 
-## Delta Specs
+## 增量规范
 
-Delta specs are the key concept that makes OpenSpec work for brownfield development. They describe **what's changing** rather than restating the entire spec.
+增量规范是使 OpenSpec 适用于棕地开发的关键概念。它们描述**正在变更什么**，而不是重述整个规范。
 
-### The Format
+### 格式
 
 ```markdown
-# Delta for Auth
+# Auth 增量
 
-## ADDED Requirements
+## 新增需求
 
-### Requirement: Two-Factor Authentication
-The system MUST support TOTP-based two-factor authentication.
+### 需求：双因素认证
+系统必须支持基于 TOTP 的双因素认证。
 
-#### Scenario: 2FA enrollment
-- GIVEN a user without 2FA enabled
-- WHEN the user enables 2FA in settings
-- THEN a QR code is displayed for authenticator app setup
-- AND the user must verify with a code before activation
+#### 场景：2FA 注册
+- 假设 用户未启用 2FA
+- 当 用户在设置中启用 2FA
+- 那么 显示二维码用于认证器应用设置
+- 并且 用户必须用代码验证后才能激活
 
-#### Scenario: 2FA login
-- GIVEN a user with 2FA enabled
-- WHEN the user submits valid credentials
-- THEN an OTP challenge is presented
-- AND login completes only after valid OTP
+#### 场景：2FA 登录
+- 假设 用户已启用 2FA
+- 当 用户提交有效凭据
+- 那么 提示 OTP 挑战
+- 并且 只有在有效 OTP 后登录才完成
 
-## MODIFIED Requirements
+## 修改需求
 
-### Requirement: Session Expiration
-The system MUST expire sessions after 15 minutes of inactivity.
-(Previously: 30 minutes)
+### 需求：会话过期
+系统必须在 15 分钟不活动后使会话过期。
+（之前：30 分钟）
 
-#### Scenario: Idle timeout
-- GIVEN an authenticated session
-- WHEN 15 minutes pass without activity
-- THEN the session is invalidated
+#### 场景：空闲超时
+- 假设 一个已认证的会话
+- 当 15 分钟内没有活动
+- 那么 会话失效
 
-## REMOVED Requirements
+## 删除需求
 
-### Requirement: Remember Me
-(Deprecated in favor of 2FA. Users should re-authenticate each session.)
+### 需求：记住我
+（已弃用，改用 2FA。用户应在每个会话重新认证。）
 ```
 
-### Delta Sections
+### 增量部分
 
-| Section | Meaning | What Happens on Archive |
+| 部分 | 含义 | 归档时发生什么 |
 |---------|---------|------------------------|
-| `## ADDED Requirements` | New behavior | Appended to main spec |
-| `## MODIFIED Requirements` | Changed behavior | Replaces existing requirement |
-| `## REMOVED Requirements` | Deprecated behavior | Deleted from main spec |
+| `## 新增需求` | 新行为 | 追加到主规范 |
+| `## 修改需求` | 变更的行为 | 替换现有需求 |
+| `## 删除需求` | 已弃用的行为 | 从主规范删除 |
 
-### Why Deltas Instead of Full Specs
+### 为什么用增量而非完整规范
 
-**Clarity.** A delta shows exactly what's changing. Reading a full spec, you'd have to diff it mentally against the current version.
+**清晰度。** 增量准确显示正在变更什么。阅读完整规范，您需要在脑中与当前版本对比。
 
-**Conflict avoidance.** Two changes can touch the same spec file without conflicting, as long as they modify different requirements.
+**避免冲突。** 两个变更可以触及同一规范文件而不冲突，只要它们修改不同的需求。
 
-**Review efficiency.** Reviewers see the change, not the unchanged context. Focus on what matters.
+**审查效率。** 审查者看到的是变更，而非未变更的上下文。专注于重要的内容。
 
-**Brownfield fit.** Most work modifies existing behavior. Deltas make modifications first-class, not an afterthought.
+**棕地适配。** 大多数工作修改现有行为。增量使修改成为一等公民，而非事后补充。
 
-## Schemas
+## 模式
 
-Schemas define the artifact types and their dependencies for a workflow.
+模式定义工作流的制品类型及其依赖关系。
 
-### How Schemas Work
+### 模式如何工作
 
 ```yaml
 # openspec/schemas/spec-driven/schema.yaml
@@ -416,26 +416,26 @@ name: spec-driven
 artifacts:
   - id: proposal
     generates: proposal.md
-    requires: []              # No dependencies, can create first
+    requires: []              # 无依赖，可以首先创建
 
   - id: specs
     generates: specs/**/*.md
-    requires: [proposal]      # Needs proposal before creating
+    requires: [proposal]      # 需要提案才能创建
 
   - id: design
     generates: design.md
-    requires: [proposal]      # Can create in parallel with specs
+    requires: [proposal]      # 可以与规范并行创建
 
   - id: tasks
     generates: tasks.md
-    requires: [specs, design] # Needs both specs and design first
+    requires: [specs, design] # 需要规范和设计才能创建
 ```
 
-**Artifacts form a dependency graph:**
+**制品形成依赖图：**
 
 ```
                     proposal
-                   (root node)
+                   (根节点)
                        │
          ┌─────────────┴─────────────┐
          │                           │
@@ -452,33 +452,33 @@ artifacts:
                 specs, design)
 ```
 
-**Dependencies are enablers, not gates.** They show what's possible to create, not what you must create next. You can skip design if you don't need it. You can create specs before or after design — both depend only on proposal.
+**依赖是启用器，不是门限。** 它们显示可以创建什么，而不是下一步必须创建什么。如果不需要，可以跳过设计。可以在设计之前或之后创建规范 — 两者都只依赖提案。
 
-### Built-in Schemas
+### 内置模式
 
-**spec-driven** (default)
+**spec-driven**（默认）
 
-The standard workflow for spec-driven development:
+规范驱动开发的标准工作流：
 
 ```
 proposal → specs → design → tasks → implement
 ```
 
-Best for: Most feature work where you want to agree on specs before implementation.
+最适合：大多数功能工作，在实现前达成规范共识。
 
-### Custom Schemas
+### 自定义模式
 
-Create custom schemas for your team's workflow:
+为您的团队工作流创建自定义模式：
 
 ```bash
-# Create from scratch
+# 从头创建
 openspec schema init research-first
 
-# Or fork an existing one
+# 或从现有模式派生
 openspec schema fork spec-driven research-first
 ```
 
-**Example custom schema:**
+**自定义模式示例：**
 
 ```yaml
 # openspec/schemas/research-first/schema.yaml
@@ -486,27 +486,27 @@ name: research-first
 artifacts:
   - id: research
     generates: research.md
-    requires: []           # Do research first
+    requires: []           # 先做研究
 
   - id: proposal
     generates: proposal.md
-    requires: [research]   # Proposal informed by research
+    requires: [research]   # 提案基于研究
 
   - id: tasks
     generates: tasks.md
-    requires: [proposal]   # Skip specs/design, go straight to tasks
+    requires: [proposal]   # 跳过规范/设计，直接到任务
 ```
 
-See [Customization](customization.md) for full details on creating and using custom schemas.
+有关创建和使用自定义模式的完整详细信息，请参阅 [自定义](customization.md)。
 
-## Archive
+## 归档
 
-Archiving completes a change by merging its delta specs into the main specs and preserving the change for history.
+归档通过将增量规范合并到主规范中并保留变更历史来完成变更。
 
-### What Happens When You Archive
+### 归档时发生什么
 
 ```
-Before archive:
+归档前：
 
 openspec/
 ├── specs/
@@ -522,15 +522,15 @@ openspec/
                 └── spec.md ─────────┘
 
 
-After archive:
+归档后：
 
 openspec/
 ├── specs/
 │   └── auth/
-│       └── spec.md        # Now includes 2FA requirements
+│       └── spec.md        # 现在包含 2FA 需求
 └── changes/
     └── archive/
-        └── 2025-01-24-add-2fa/    # Preserved for history
+        └── 2025-01-24-add-2fa/    # 保留历史
             ├── proposal.md
             ├── design.md
             ├── tasks.md
@@ -539,90 +539,90 @@ openspec/
                     └── spec.md
 ```
 
-### The Archive Process
+### 归档流程
 
-1. **Merge deltas.** Each delta spec section (ADDED/MODIFIED/REMOVED) is applied to the corresponding main spec.
+1. **合并增量。** 每个增量规范部分（新增/修改/删除）应用到相应的主规范。
 
-2. **Move to archive.** The change folder moves to `changes/archive/` with a date prefix for chronological ordering.
+2. **移动到归档。** 变更文件夹移动到 `changes/archive/`，带日期前缀用于按时间排序。
 
-3. **Preserve context.** All artifacts remain intact in the archive. You can always look back to understand why a change was made.
+3. **保留上下文。** 所有制品在归档中保持完整。您可以随时回顾以理解为什么做出变更。
 
-### Why Archive Matters
+### 为什么归档很重要
 
-**Clean state.** Active changes (`changes/`) shows only work in progress. Completed work moves out of the way.
+**清洁状态。** 活动变更（`changes/`）只显示进行中的工作。已完成的工作移出视野。
 
-**Audit trail.** The archive preserves the full context of every change — not just what changed, but the proposal explaining why, the design explaining how, and the tasks showing the work done.
+**审计追踪。** 归档保留每个变更的完整上下文 — 不仅是什么改变了，还有解释为什么的提案、解释如何的设计，以及显示所做工作的任务。
 
-**Spec evolution.** Specs grow organically as changes are archived. Each archive merges its deltas, building up a comprehensive specification over time.
+**规范演进。** 规范随着变更归档有机增长。每次归档合并其增量，随时间建立全面的规范。
 
-## How It All Fits Together
+## 整体如何协同工作
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                              OPENSPEC FLOW                                   │
+│                              OPENSPEC 流程                                   │
 │                                                                              │
 │   ┌────────────────┐                                                         │
-│   │  1. START      │  /opsx:propose (core) or /opsx:new (expanded)          │
-│   │     CHANGE     │                                                         │
+│   │  1. 开始      │  /opsx:propose (核心) 或 /opsx:new (扩展)               │
+│   │     变更      │                                                         │
 │   └───────┬────────┘                                                         │
 │           │                                                                  │
 │           ▼                                                                  │
 │   ┌────────────────┐                                                         │
-│   │  2. CREATE     │  /opsx:ff or /opsx:continue (expanded workflow)         │
-│   │     ARTIFACTS  │  Creates proposal → specs → design → tasks              │
-│   │                │  (based on schema dependencies)                         │
+│   │  2. 创建      │  /opsx:ff 或 /opsx:continue (扩展工作流)                 │
+│   │     制品      │  创建 proposal → specs → design → tasks                  │
+│   │                │  (基于模式依赖)                                         │
 │   └───────┬────────┘                                                         │
 │           │                                                                  │
 │           ▼                                                                  │
 │   ┌────────────────┐                                                         │
-│   │  3. IMPLEMENT  │  /opsx:apply                                            │
-│   │     TASKS      │  Work through tasks, checking them off                  │
-│   │                │◄──── Update artifacts as you learn                      │
+│   │  3. 实现      │  /opsx:apply                                            │
+│   │     任务      │  执行任务，逐个完成                                      │
+│   │                │◄──── 在学习过程中更新制品                              │
 │   └───────┬────────┘                                                         │
 │           │                                                                  │
 │           ▼                                                                  │
 │   ┌────────────────┐                                                         │
-│   │  4. VERIFY     │  /opsx:verify (optional)                                │
-│   │     WORK       │  Check implementation matches specs                     │
+│   │  4. 验证      │  /opsx:verify (可选)                                    │
+│   │     工作      │  检查实现是否匹配规范                                    │
 │   └───────┬────────┘                                                         │
 │           │                                                                  │
 │           ▼                                                                  │
 │   ┌────────────────┐     ┌──────────────────────────────────────────────┐   │
-│   │  5. ARCHIVE    │────►│  Delta specs merge into main specs           │   │
-│   │     CHANGE     │     │  Change folder moves to archive/             │   │
-│   └────────────────┘     │  Specs are now the updated source of truth   │   │
+│   │  5. 归档      │────►│  增量规范合并到主规范                         │   │
+│   │     变更      │     │  变更文件夹移动到 archive/                    │   │
+│   └────────────────┘     │  规范现在是更新后的真相来源                   │   │
 │                          └──────────────────────────────────────────────┘   │
 │                                                                              │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-**The virtuous cycle:**
+**良性循环：**
 
-1. Specs describe current behavior
-2. Changes propose modifications (as deltas)
-3. Implementation makes the changes real
-4. Archive merges deltas into specs
-5. Specs now describe the new behavior
-6. Next change builds on updated specs
+1. 规范描述当前行为
+2. 变更提出修改（作为增量）
+3. 实现使变更成为现实
+4. 归档将增量合并到规范
+5. 规范现在描述新行为
+6. 下一个变更基于更新的规范构建
 
-## Glossary
+## 术语表
 
-| Term | Definition |
+| 术语 | 定义 |
 |------|------------|
-| **Artifact** | A document within a change (proposal, design, tasks, or delta specs) |
-| **Archive** | The process of completing a change and merging its deltas into main specs |
-| **Change** | A proposed modification to the system, packaged as a folder with artifacts |
-| **Delta spec** | A spec that describes changes (ADDED/MODIFIED/REMOVED) relative to current specs |
-| **Domain** | A logical grouping for specs (e.g., `auth/`, `payments/`) |
-| **Requirement** | A specific behavior the system must have |
-| **Scenario** | A concrete example of a requirement, typically in Given/When/Then format |
-| **Schema** | A definition of artifact types and their dependencies |
-| **Spec** | A specification describing system behavior, containing requirements and scenarios |
-| **Source of truth** | The `openspec/specs/` directory, containing the current agreed-upon behavior |
+| **制品** | 变更中的文档（提案、设计、任务或增量规范） |
+| **归档** | 完成变更并将其增量合并到主规范的过程 |
+| **变更** | 对系统的建议修改，打包为包含制品的文件夹 |
+| **增量规范** | 描述相对于当前规范的变更（新增/修改/删除）的规范 |
+| **领域** | 规范的逻辑分组（如 `auth/`、`payments/`） |
+| **需求** | 系统必须具有的特定行为 |
+| **场景** | 需求的具体示例，通常采用 Given/When/Then 格式 |
+| **模式** | 制品类型及其依赖关系的定义 |
+| **规范** | 描述系统行为的规范，包含需求和场景 |
+| **真相来源** | `openspec/specs/` 目录，包含当前商定的行为 |
 
-## Next Steps
+## 后续步骤
 
-- [Getting Started](getting-started.md) - Practical first steps
-- [Workflows](workflows.md) - Common patterns and when to use each
-- [Commands](commands.md) - Full command reference
-- [Customization](customization.md) - Create custom schemas and configure your project
+- [快速开始](getting-started.md) - 实用的第一步
+- [工作流](workflows.md) - 常见模式及何时使用
+- [命令参考](commands.md) - 完整的命令参考
+- [自定义](customization.md) - 创建自定义模式和配置项目

@@ -1,26 +1,26 @@
-# Supported Tools
+# 支持的工具
 
-OpenSpec works with many AI coding assistants. When you run `openspec init`, OpenSpec configures selected tools using your active profile/workflow selection and delivery mode.
+OpenSpec 可与许多 AI 编码助手配合使用。当您运行 `openspec init` 时，OpenSpec 会使用您的活动配置文件/工作流选择和交付模式配置选定的工具。
 
-## How It Works
+## 工作原理
 
-For each selected tool, OpenSpec can install:
+对于每个选定的工具，OpenSpec 可以安装：
 
-1. **Skills** (if delivery includes skills): `.../skills/openspec-*/SKILL.md`
-2. **Commands** (if delivery includes commands): tool-specific `opsx-*` command files
+1. **技能** (如果交付包含技能): `.../skills/openspec-*/SKILL.md`
+2. **命令** (如果交付包含命令): 工具特定的 `opsx-*` 命令文件
 
-By default, OpenSpec uses the `core` profile, which includes:
+默认情况下，OpenSpec 使用 `core` 配置文件，包括：
 - `propose`
 - `explore`
 - `apply`
 - `archive`
 
-You can enable expanded workflows (`new`, `continue`, `ff`, `verify`, `sync`, `bulk-archive`, `onboard`) via `openspec config profile`, then run `openspec update`.
+您可以通过 `openspec config profile` 启用扩展工作流 (`new`、`continue`、`ff`、`verify`、`sync`、`bulk-archive`、`onboard`)，然后运行 `openspec update`。
 
-## Tool Directory Reference
+## 工具目录参考
 
-| Tool (ID) | Skills path pattern | Command path pattern |
-|-----------|---------------------|----------------------|
+| 工具 (ID) | 技能路径模式 | 命令路径模式 |
+|-----------|-------------|-------------|
 | Amazon Q Developer (`amazon-q`) | `.amazonq/skills/openspec-*/SKILL.md` | `.amazonq/prompts/opsx-<id>.md` |
 | Antigravity (`antigravity`) | `.agent/skills/openspec-*/SKILL.md` | `.agent/workflows/opsx-<id>.md` |
 | Auggie (`auggie`) | `.augment/skills/openspec-*/SKILL.md` | `.augment/commands/opsx-<id>.md` |
@@ -43,46 +43,46 @@ You can enable expanded workflows (`new`, `continue`, `ff`, `verify`, `sync`, `b
 | Qoder (`qoder`) | `.qoder/skills/openspec-*/SKILL.md` | `.qoder/commands/opsx/<id>.md` |
 | Qwen Code (`qwen`) | `.qwen/skills/openspec-*/SKILL.md` | `.qwen/commands/opsx-<id>.toml` |
 | RooCode (`roocode`) | `.roo/skills/openspec-*/SKILL.md` | `.roo/commands/opsx-<id>.md` |
-| Trae (`trae`) | `.trae/skills/openspec-*/SKILL.md` | Not generated (no command adapter; use skill-based `/openspec-*` invocations) |
+| Trae (`trae`) | `.trae/skills/openspec-*/SKILL.md` | 不生成 (无命令适配器；使用基于技能的 `/openspec-*` 调用) |
 | Windsurf (`windsurf`) | `.windsurf/skills/openspec-*/SKILL.md` | `.windsurf/workflows/opsx-<id>.md` |
 
-\* Codex commands are installed in the global Codex home (`$CODEX_HOME/prompts/` if set, otherwise `~/.codex/prompts/`), not your project directory.
+\* Codex 命令安装在全局 Codex 主目录 (如果设置了 `$CODEX_HOME/prompts/`，否则是 `~/.codex/prompts/`)，而不是您的项目目录。
 
-\*\* GitHub Copilot prompt files are recognized as custom slash commands in IDE extensions (VS Code, JetBrains, Visual Studio). Copilot CLI does not currently consume `.github/prompts/*.prompt.md` directly.
+\*\* GitHub Copilot 提示文件在 IDE 扩展 (VS Code、JetBrains、Visual Studio) 中被识别为自定义斜杠命令。Copilot CLI 目前不直接使用 `.github/prompts/*.prompt.md`。
 
-## Non-Interactive Setup
+## 非交互式设置
 
-For CI/CD or scripted setup, use `--tools` (and optionally `--profile`):
+对于 CI/CD 或脚本设置，使用 `--tools` (以及可选的 `--profile`)：
 
 ```bash
-# Configure specific tools
+# 配置特定工具
 openspec init --tools claude,cursor
 
-# Configure all supported tools
+# 配置所有支持的工具
 openspec init --tools all
 
-# Skip tool configuration
+# 跳过工具配置
 openspec init --tools none
 
-# Override profile for this init run
+# 为此 init 运行覆盖配置文件
 openspec init --profile core
 ```
 
-**Available tool IDs (`--tools`):** `amazon-q`, `antigravity`, `auggie`, `claude`, `cline`, `codex`, `codebuddy`, `continue`, `costrict`, `crush`, `cursor`, `factory`, `gemini`, `github-copilot`, `iflow`, `kilocode`, `kiro`, `opencode`, `pi`, `qoder`, `qwen`, `roocode`, `trae`, `windsurf`
+**可用的工具 ID (`--tools`):** `amazon-q`、`antigravity`、`auggie`、`claude`、`cline`、`codex`、`codebuddy`、`continue`、`costrict`、`crush`、`cursor`、`factory`、`gemini`、`github-copilot`、`iflow`、`kilocode`、`kiro`、`opencode`、`pi`、`qoder`、`qwen`、`roocode`、`trae`、`windsurf`
 
-## Workflow-Dependent Installation
+## 依赖工作流的安装
 
-OpenSpec installs workflow artifacts based on selected workflows:
+OpenSpec 根据选定的工作流安装工作流制品：
 
-- **Core profile (default):** `propose`, `explore`, `apply`, `archive`
-- **Custom selection:** any subset of all workflow IDs:
-  `propose`, `explore`, `new`, `continue`, `apply`, `ff`, `sync`, `archive`, `bulk-archive`, `verify`, `onboard`
+- **核心配置文件 (默认):** `propose`、`explore`、`apply`、`archive`
+- **自定义选择:** 所有工作流 ID 的任意子集：
+  `propose`、`explore`、`new`、`continue`、`apply`、`ff`、`sync`、`archive`、`bulk-archive`、`verify`、`onboard`
 
-In other words, skill/command counts are profile-dependent and delivery-dependent, not fixed.
+换句话说，技能/命令数量取决于配置文件和交付模式，不是固定的。
 
-## Generated Skill Names
+## 生成的技能名称
 
-When selected by profile/workflow config, OpenSpec generates these skills:
+当按配置文件/工作流配置选择时，OpenSpec 生成这些技能：
 
 - `openspec-propose`
 - `openspec-explore`
@@ -96,10 +96,10 @@ When selected by profile/workflow config, OpenSpec generates these skills:
 - `openspec-verify-change`
 - `openspec-onboard`
 
-See [Commands](commands.md) for command behavior and [CLI](cli.md) for `init`/`update` options.
+参见 [命令](commands.md) 了解命令行为，参见 [CLI](cli.md) 了解 `init`/`update` 选项。
 
-## Related
+## 相关
 
-- [CLI Reference](cli.md) — Terminal commands
-- [Commands](commands.md) — Slash commands and skills
-- [Getting Started](getting-started.md) — First-time setup
+- [CLI 参考](cli.md) — 终端命令
+- [命令](commands.md) — 斜杠命令和技能
+- [快速入门](getting-started.md) — 首次设置

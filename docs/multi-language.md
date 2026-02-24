@@ -1,10 +1,10 @@
-# Multi-Language Guide
+# 多语言指南
 
-Configure OpenSpec to generate artifacts in languages other than English.
+配置 OpenSpec 以生成非英语语言的制品。
 
-## Quick Setup
+## 快速设置
 
-Add a language instruction to your `openspec/config.yaml`:
+在 `openspec/config.yaml` 中添加语言指令：
 
 ```yaml
 schema: spec-driven
@@ -13,15 +13,15 @@ context: |
   Language: Portuguese (pt-BR)
   All artifacts must be written in Brazilian Portuguese.
 
-  # Your other project context below...
+  # 下面是您的其他项目上下文...
   Tech stack: TypeScript, React, Node.js
 ```
 
-That's it. All generated artifacts will now be in Portuguese.
+就这样。现在所有生成的制品都将使用葡萄牙语。
 
-## Language Examples
+## 语言示例
 
-### Portuguese (Brazil)
+### 葡萄牙语（巴西）
 
 ```yaml
 context: |
@@ -29,7 +29,7 @@ context: |
   All artifacts must be written in Brazilian Portuguese.
 ```
 
-### Spanish
+### 西班牙语
 
 ```yaml
 context: |
@@ -37,7 +37,7 @@ context: |
   Todos los artefactos deben escribirse en español.
 ```
 
-### Chinese (Simplified)
+### 中文（简体）
 
 ```yaml
 context: |
@@ -45,7 +45,7 @@ context: |
   所有产出物必须用简体中文撰写。
 ```
 
-### Japanese
+### 日语
 
 ```yaml
 context: |
@@ -53,7 +53,7 @@ context: |
   すべての成果物は日本語で作成してください。
 ```
 
-### French
+### 法语
 
 ```yaml
 context: |
@@ -61,7 +61,7 @@ context: |
   Tous les artefacts doivent être rédigés en français.
 ```
 
-### German
+### 德语
 
 ```yaml
 context: |
@@ -69,11 +69,11 @@ context: |
   Alle Artefakte müssen auf Deutsch verfasst werden.
 ```
 
-## Tips
+## 使用技巧
 
-### Handle Technical Terms
+### 处理技术术语
 
-Decide how to handle technical terminology:
+决定如何处理技术术语：
 
 ```yaml
 context: |
@@ -83,9 +83,9 @@ context: |
   - Code examples and file paths remain in English
 ```
 
-### Combine with Other Context
+### 与其他上下文结合
 
-Language settings work alongside your other project context:
+语言设置可以与其他项目上下文一起使用：
 
 ```yaml
 schema: spec-driven
@@ -98,18 +98,18 @@ context: |
   Database: PostgreSQL with Prisma ORM
 ```
 
-## Verification
+## 验证配置
 
-To verify your language config is working:
+要验证语言配置是否生效：
 
 ```bash
-# Check the instructions - should show your language context
+# 检查指令 - 应该显示您的语言上下文
 openspec instructions proposal --change my-change
 
-# Output will include your language context
+# 输出将包含您的语言上下文
 ```
 
-## Related Documentation
+## 相关文档
 
-- [Customization Guide](./customization.md) - Project configuration options
-- [Workflows Guide](./workflows.md) - Full workflow documentation
+- [自定义指南](./customization.md) - 项目配置选项
+- [工作流指南](./workflows.md) - 完整的工作流文档

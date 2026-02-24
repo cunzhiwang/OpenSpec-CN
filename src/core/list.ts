@@ -64,13 +64,13 @@ function formatRelativeTime(date: Date): string {
   if (diffDays > 30) {
     return date.toLocaleDateString();
   } else if (diffDays > 0) {
-    return `${diffDays}d ago`;
+    return `${diffDays}天前`;
   } else if (diffHours > 0) {
-    return `${diffHours}h ago`;
+    return `${diffHours}小时前`;
   } else if (diffMins > 0) {
-    return `${diffMins}m ago`;
+    return `${diffMins}分钟前`;
   } else {
-    return 'just now';
+    return '刚刚';
   }
 }
 
@@ -85,7 +85,7 @@ export class ListCommand {
       try {
         await fs.access(changesDir);
       } catch {
-        throw new Error("No OpenSpec changes directory found. Run 'openspec init' first.");
+        throw new Error("未找到 OpenSpec 变更目录。请先运行 'openspec init'。");
       }
 
       // Get all directories in changes (excluding archive)
@@ -94,14 +94,14 @@ export class ListCommand {
         .filter(entry => entry.isDirectory() && entry.name !== 'archive')
         .map(entry => entry.name);
 
-      if (changeDirs.length === 0) {
-        if (json) {
-          console.log(JSON.stringify({ changes: [] }));
-        } else {
-          console.log('No active changes found.');
-        }
-        return;
+    if (changeDirs.length === 0) {
+      if (json) {
+        console.log(JSON.stringify({ changes: [] }));
+      } else {
+        console.log('没有找到活动变更。');
       }
+      return;
+    }
 
       // Collect information about each change
       const changes: ChangeInfo[] = [];
@@ -125,7 +125,7 @@ export class ListCommand {
         changes.sort((a, b) => a.name.localeCompare(b.name));
       }
 
-      // JSON output for programmatic use
+      // 用于程序化使用的 JSON 输出
       if (json) {
         const jsonOutput = changes.map(c => ({
           name: c.name,
@@ -138,8 +138,8 @@ export class ListCommand {
         return;
       }
 
-      // Display results
-      console.log('Changes:');
+      // 显示结果
+      console.log('变更列表:');
       const padding = '  ';
       const nameWidth = Math.max(...changes.map(c => c.name.length));
       for (const change of changes) {
@@ -151,19 +151,19 @@ export class ListCommand {
       return;
     }
 
-    // specs mode
+    // 规范模式
     const specsDir = path.join(targetPath, 'openspec', 'specs');
     try {
       await fs.access(specsDir);
     } catch {
-      console.log('No specs found.');
+      console.log('没有找到规范。');
       return;
     }
 
     const entries = await fs.readdir(specsDir, { withFileTypes: true });
     const specDirs = entries.filter(e => e.isDirectory()).map(e => e.name);
     if (specDirs.length === 0) {
-      console.log('No specs found.');
+      console.log('没有找到规范。');
       return;
     }
 
@@ -177,18 +177,18 @@ export class ListCommand {
         const spec = parser.parseSpec(id);
         specs.push({ id, requirementCount: spec.requirements.length });
       } catch {
-        // If spec cannot be read or parsed, include with 0 count
+        // 如果无法读取或解析规范，包含 0 计数
         specs.push({ id, requirementCount: 0 });
       }
     }
 
     specs.sort((a, b) => a.id.localeCompare(b.id));
-    console.log('Specs:');
+    console.log('规范列表:');
     const padding = '  ';
     const nameWidth = Math.max(...specs.map(s => s.id.length));
     for (const spec of specs) {
       const padded = spec.id.padEnd(nameWidth);
-      console.log(`${padding}${padded}     requirements ${spec.requirementCount}`);
+      console.log(`${padding}${padded}     需求 ${spec.requirementCount}`);
     }
   }
 }

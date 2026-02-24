@@ -59,7 +59,30 @@ function getCommandPath(command: Command): string {
 program
   .name('openspec')
   .description('AI原生规范驱动开发系统')
-  .version(version);
+  .version(version, '-V, --version', '输出版本号');
+
+// 配置帮助命令的中文文本
+program.configureHelp({
+  commandUsage: (cmd) => {
+    const args = cmd.registeredArguments.map(arg => arg.required ? `<${arg.name()}>` : `[${arg.name()}]`);
+    const cmdName = cmd.name();
+    const parentCmdNames: string[] = [];
+    let parent = cmd.parent;
+    while (parent) {
+      parentCmdNames.unshift(parent.name());
+      parent = parent.parent;
+    }
+    return `${parentCmdNames.concat(cmdName, args).join(' ')} [选项]${cmd.commands.length > 0 ? ' [命令]' : ''}`;
+  },
+  subcommandTerm: (cmd) => {
+    const args = cmd.registeredArguments.map(arg => arg.required ? `<${arg.name()}>` : `[${arg.name()}]`);
+    return cmd.name() + (cmd.options.length > 0 ? ' [options]' : '') + (args.length > 0 ? ' ' + args.join(' ') : '');
+  }
+});
+
+// 添加汉化的帮助选项和命令
+program.helpOption('-h, --help', '显示命令帮助');
+program.helpCommand('help', '显示命令帮助');
 
 // 全局选项
 program.option('--no-color', '禁用彩色输出');

@@ -144,20 +144,20 @@ function validateSchema(
 
   // Check schema.yaml exists
   if (verbose) {
-    console.log('  Checking schema.yaml exists...');
+    console.log('  检查 schema.yaml 是否存在...');
   }
   if (!fs.existsSync(schemaPath)) {
     issues.push({
       level: 'error',
       path: 'schema.yaml',
-      message: 'schema.yaml not found',
+      message: 'schema.yaml 未找到',
     });
     return { valid: false, issues };
   }
 
   // Parse YAML
   if (verbose) {
-    console.log('  Parsing YAML...');
+    console.log('  解析 YAML...');
   }
   let content: string;
   try {
@@ -166,14 +166,14 @@ function validateSchema(
     issues.push({
       level: 'error',
       path: 'schema.yaml',
-      message: `Failed to read file: ${(err as Error).message}`,
+      message: `读取文件失败: ${(err as Error).message}`,
     });
     return { valid: false, issues };
   }
 
   // Validate against Zod schema
   if (verbose) {
-    console.log('  Validating schema structure...');
+    console.log('  验证模式结构...');
   }
   let schema: SchemaYaml;
   try {
@@ -189,7 +189,7 @@ function validateSchema(
       issues.push({
         level: 'error',
         path: 'schema.yaml',
-        message: `Parse error: ${(err as Error).message}`,
+        message: `解析错误: ${(err as Error).message}`,
       });
     }
     return { valid: false, issues };
@@ -198,7 +198,7 @@ function validateSchema(
   // Check template files exist
   // Templates can be in schemaDir directly or in a templates/ subdirectory
   if (verbose) {
-    console.log('  Checking template files...');
+    console.log('  检查模板文件...');
   }
   for (const artifact of schema.artifacts) {
     // Try templates subdirectory first (standard location), then root
@@ -209,7 +209,7 @@ function validateSchema(
       issues.push({
         level: 'error',
         path: `artifacts.${artifact.id}.template`,
-        message: `Template file '${artifact.template}' not found for artifact '${artifact.id}'`,
+        message: `制品 '${artifact.id}' 的模板文件 '${artifact.template}' 未找到`,
       });
     }
   }
@@ -217,7 +217,7 @@ function validateSchema(
   // Dependency graph validation is already done by parseSchema
   // (it throws on cycles and invalid references)
   if (verbose) {
-    console.log('  Dependency graph validation passed (via parseSchema)');
+    console.log('  依赖图验证通过 (通过 parseSchema)');
   }
 
   return { valid: issues.length === 0, issues };
@@ -290,19 +290,19 @@ const DEFAULT_ARTIFACTS: Array<{
 export function registerSchemaCommand(program: Command): void {
   const schemaCmd = program
     .command('schema')
-    .description('Manage workflow schemas [experimental]');
+    .description('管理工作流模式 [实验性]');
 
   // Experimental warning
   schemaCmd.hook('preAction', () => {
-    console.error('Note: Schema commands are experimental and may change.');
+    console.error('注意: 模式命令是实验性功能，可能会发生变化。');
   });
 
   // schema which
   schemaCmd
     .command('which [name]')
-    .description('Show where a schema resolves from')
-    .option('--json', 'Output as JSON')
-    .option('--all', 'List all schemas with their resolution sources')
+    .description('显示模式的解析来源')
+    .option('--json', '以 JSON 格式输出')
+    .option('--all', '列出所有模式及其解析来源')
     .action(async (name?: string, options?: { json?: boolean; all?: boolean }) => {
       try {
         const projectRoot = process.cwd();
@@ -315,7 +315,7 @@ export function registerSchemaCommand(program: Command): void {
             console.log(JSON.stringify(schemas, null, 2));
           } else {
             if (schemas.length === 0) {
-              console.log('No schemas found.');
+              console.log('未找到模式。');
               return;
             }
 
@@ -327,27 +327,27 @@ export function registerSchemaCommand(program: Command): void {
             };
 
             if (bySource.project.length > 0) {
-              console.log('\nProject schemas:');
+              console.log('\n项目模式:');
               for (const schema of bySource.project) {
                 const shadowInfo = schema.shadows.length > 0
-                  ? ` (shadows: ${schema.shadows.map((s) => s.source).join(', ')})`
+                  ? ` (覆盖: ${schema.shadows.map((s) => s.source).join(', ')})`
                   : '';
                 console.log(`  ${schema.name}${shadowInfo}`);
               }
             }
 
             if (bySource.user.length > 0) {
-              console.log('\nUser schemas:');
+              console.log('\n用户模式:');
               for (const schema of bySource.user) {
                 const shadowInfo = schema.shadows.length > 0
-                  ? ` (shadows: ${schema.shadows.map((s) => s.source).join(', ')})`
+                  ? ` (覆盖: ${schema.shadows.map((s) => s.source).join(', ')})`
                   : '';
                 console.log(`  ${schema.name}${shadowInfo}`);
               }
             }
 
             if (bySource.package.length > 0) {
-              console.log('\nPackage schemas:');
+              console.log('\n包模式:');
               for (const schema of bySource.package) {
                 console.log(`  ${schema.name}`);
               }
@@ -357,7 +357,7 @@ export function registerSchemaCommand(program: Command): void {
         }
 
         if (!name) {
-          console.error('Error: Schema name is required (or use --all to list all schemas)');
+          console.error('错误: 需要模式名称 (或使用 --all 列出所有模式)');
           process.exitCode = 1;
           return;
         }
@@ -368,12 +368,12 @@ export function registerSchemaCommand(program: Command): void {
           const available = listSchemas(projectRoot);
           if (options?.json) {
             console.log(JSON.stringify({
-              error: `Schema '${name}' not found`,
+              error: `模式 '${name}' 未找到`,
               available,
             }, null, 2));
           } else {
-            console.error(`Error: Schema '${name}' not found`);
-            console.error(`Available schemas: ${available.join(', ')}`);
+            console.error(`错误: 模式 '${name}' 未找到`);
+            console.error(`可用模式: ${available.join(', ')}`);
           }
           process.exitCode = 1;
           return;
@@ -382,12 +382,12 @@ export function registerSchemaCommand(program: Command): void {
         if (options?.json) {
           console.log(JSON.stringify(resolution, null, 2));
         } else {
-          console.log(`Schema: ${resolution.name}`);
-          console.log(`Source: ${resolution.source}`);
-          console.log(`Path: ${resolution.path}`);
+          console.log(`模式: ${resolution.name}`);
+          console.log(`来源: ${resolution.source}`);
+          console.log(`路径: ${resolution.path}`);
 
           if (resolution.shadows.length > 0) {
-            console.log('\nShadows:');
+            console.log('\n覆盖:');
             for (const shadow of resolution.shadows) {
               console.log(`  ${shadow.source}: ${shadow.path}`);
             }
@@ -402,9 +402,9 @@ export function registerSchemaCommand(program: Command): void {
   // schema validate
   schemaCmd
     .command('validate [name]')
-    .description('Validate a schema structure and templates')
-    .option('--json', 'Output as JSON')
-    .option('--verbose', 'Show detailed validation steps')
+    .description('验证模式结构和模板')
+    .option('--json', '以 JSON 格式输出')
+    .option('--verbose', '显示详细验证步骤')
     .action(async (name?: string, options?: { json?: boolean; verbose?: boolean }) => {
       try {
         const projectRoot = process.cwd();
@@ -417,11 +417,11 @@ export function registerSchemaCommand(program: Command): void {
             if (options?.json) {
               console.log(JSON.stringify({
                 valid: true,
-                message: 'No project schemas directory found',
+                message: '未找到项目模式目录',
                 schemas: [],
               }, null, 2));
             } else {
-              console.log('No project schemas directory found.');
+              console.log('未找到项目模式目录。');
             }
             return;
           }
@@ -445,7 +445,7 @@ export function registerSchemaCommand(program: Command): void {
             if (!fs.existsSync(schemaPath)) continue;
 
             if (options?.verbose && !options?.json) {
-              console.log(`\nValidating ${entry.name}...`);
+              console.log(`\n正在验证 ${entry.name}...`);
             }
 
             const result = validateSchema(schemaDir, options?.verbose && !options?.json);
@@ -468,11 +468,11 @@ export function registerSchemaCommand(program: Command): void {
             }, null, 2));
           } else {
             if (schemaResults.length === 0) {
-              console.log('No schemas found in project.');
+              console.log('项目中未找到模式。');
               return;
             }
 
-            console.log('\nValidation Results:');
+            console.log('\n验证结果:');
             for (const result of schemaResults) {
               const status = result.valid ? '✓' : '✗';
               console.log(`  ${status} ${result.name}`);
@@ -496,19 +496,19 @@ export function registerSchemaCommand(program: Command): void {
           if (options?.json) {
             console.log(JSON.stringify({
               valid: false,
-              error: `Schema '${name}' not found`,
+              error: `模式 '${name}' 未找到`,
               available,
             }, null, 2));
           } else {
-            console.error(`Error: Schema '${name}' not found`);
-            console.error(`Available schemas: ${available.join(', ')}`);
+            console.error(`错误: 模式 '${name}' 未找到`);
+            console.error(`可用模式: ${available.join(', ')}`);
           }
           process.exitCode = 1;
           return;
         }
 
         if (options?.verbose && !options?.json) {
-          console.log(`Validating ${name}...`);
+          console.log(`正在验证 ${name}...`);
         }
 
         const result = validateSchema(schemaDir, options?.verbose && !options?.json);
@@ -522,9 +522,9 @@ export function registerSchemaCommand(program: Command): void {
           }, null, 2));
         } else {
           if (result.valid) {
-            console.log(`✓ Schema '${name}' is valid`);
+            console.log(`✓ 模式 '${name}' 验证通过`);
           } else {
-            console.log(`✗ Schema '${name}' has errors:`);
+            console.log(`✗ 模式 '${name}' 存在错误:`);
             for (const issue of result.issues) {
               console.log(`  ${issue.level}: ${issue.message}`);
             }
@@ -547,9 +547,9 @@ export function registerSchemaCommand(program: Command): void {
   // schema fork
   schemaCmd
     .command('fork <source> [name]')
-    .description('Copy an existing schema to project for customization')
-    .option('--json', 'Output as JSON')
-    .option('--force', 'Overwrite existing destination')
+    .description('复制现有模式到项目进行自定义')
+    .option('--json', '以 JSON 格式输出')
+    .option('--force', '覆盖已存在的目标')
     .action(async (source: string, name?: string, options?: { json?: boolean; force?: boolean }) => {
       const spinner = options?.json ? null : ora();
 
@@ -562,11 +562,11 @@ export function registerSchemaCommand(program: Command): void {
           if (options?.json) {
             console.log(JSON.stringify({
               forked: false,
-              error: `Invalid schema name '${destinationName}'. Use kebab-case (e.g., my-workflow)`,
+              error: `无效的模式名称 '${destinationName}'。请使用 kebab-case (如 my-workflow)`,
             }, null, 2));
           } else {
-            console.error(`Error: Invalid schema name '${destinationName}'`);
-            console.error('Schema names must be kebab-case (e.g., my-workflow)');
+            console.error(`错误: 无效的模式名称 '${destinationName}'`);
+            console.error('模式名称必须是 kebab-case (如 my-workflow)');
           }
           process.exitCode = 1;
           return;
@@ -579,12 +579,12 @@ export function registerSchemaCommand(program: Command): void {
           if (options?.json) {
             console.log(JSON.stringify({
               forked: false,
-              error: `Schema '${source}' not found`,
+              error: `模式 '${source}' 未找到`,
               available,
             }, null, 2));
           } else {
-            console.error(`Error: Schema '${source}' not found`);
-            console.error(`Available schemas: ${available.join(', ')}`);
+            console.error(`错误: 模式 '${source}' 未找到`);
+            console.error(`可用模式: ${available.join(', ')}`);
           }
           process.exitCode = 1;
           return;
@@ -602,24 +602,24 @@ export function registerSchemaCommand(program: Command): void {
             if (options?.json) {
               console.log(JSON.stringify({
                 forked: false,
-                error: `Schema '${destinationName}' already exists`,
-                suggestion: 'Use --force to overwrite',
+                error: `模式 '${destinationName}' 已存在`,
+                suggestion: '使用 --force 覆盖',
               }, null, 2));
             } else {
-              console.error(`Error: Schema '${destinationName}' already exists at ${destinationDir}`);
-              console.error('Use --force to overwrite');
+              console.error(`错误: 模式 '${destinationName}' 已存在于 ${destinationDir}`);
+              console.error('使用 --force 覆盖');
             }
             process.exitCode = 1;
             return;
           }
 
           // Remove existing
-          if (spinner) spinner.start(`Removing existing schema '${destinationName}'...`);
+          if (spinner) spinner.start(`正在移除现有模式 '${destinationName}'...`);
           fs.rmSync(destinationDir, { recursive: true });
         }
 
         // Copy schema
-        if (spinner) spinner.start(`Forking '${source}' to '${destinationName}'...`);
+        if (spinner) spinner.start(`正在复制 '${source}' 到 '${destinationName}'...`);
         copyDirRecursive(sourceDir, destinationDir);
 
         // Update name in schema.yaml
@@ -630,7 +630,7 @@ export function registerSchemaCommand(program: Command): void {
 
         fs.writeFileSync(destSchemaPath, stringifyYaml(schema));
 
-        if (spinner) spinner.succeed(`Forked '${source}' to '${destinationName}'`);
+        if (spinner) spinner.succeed(`已复制 '${source}' 到 '${destinationName}'`);
 
         if (options?.json) {
           console.log(JSON.stringify({
@@ -642,13 +642,13 @@ export function registerSchemaCommand(program: Command): void {
             destinationPath: destinationDir,
           }, null, 2));
         } else {
-          console.log(`\nSource: ${sourceDir} (${sourceLocation})`);
-          console.log(`Destination: ${destinationDir}`);
-          console.log(`\nYou can now customize the schema at:`);
+          console.log(`\n来源: ${sourceDir} (${sourceLocation})`);
+          console.log(`目标: ${destinationDir}`);
+          console.log(`\n您现在可以在以下位置自定义模式:`);
           console.log(`  ${destinationDir}/schema.yaml`);
         }
       } catch (error) {
-        if (spinner) spinner.fail(`Fork failed`);
+        if (spinner) spinner.fail(`复制失败`);
         if (options?.json) {
           console.log(JSON.stringify({
             forked: false,
@@ -664,13 +664,13 @@ export function registerSchemaCommand(program: Command): void {
   // schema init
   schemaCmd
     .command('init <name>')
-    .description('Create a new project-local schema')
-    .option('--json', 'Output as JSON')
-    .option('--description <text>', 'Schema description')
-    .option('--artifacts <list>', 'Comma-separated artifact IDs (proposal,specs,design,tasks)')
-    .option('--default', 'Set as project default schema')
-    .option('--no-default', 'Do not prompt to set as default')
-    .option('--force', 'Overwrite existing schema')
+    .description('创建新的项目本地模式')
+    .option('--json', '以 JSON 格式输出')
+    .option('--description <text>', '模式描述')
+    .option('--artifacts <list>', '逗号分隔的制品 ID (proposal,specs,design,tasks)')
+    .option('--default', '设为项目默认模式')
+    .option('--no-default', '不提示设为默认')
+    .option('--force', '覆盖已存在的模式')
     .action(async (
       name: string,
       options?: {
@@ -691,11 +691,11 @@ export function registerSchemaCommand(program: Command): void {
           if (options?.json) {
             console.log(JSON.stringify({
               created: false,
-              error: `Invalid schema name '${name}'. Use kebab-case (e.g., my-workflow)`,
+              error: `无效的模式名称 '${name}'。请使用 kebab-case (如 my-workflow)`,
             }, null, 2));
           } else {
-            console.error(`Error: Invalid schema name '${name}'`);
-            console.error('Schema names must be kebab-case (e.g., my-workflow)');
+            console.error(`错误: 无效的模式名称 '${name}'`);
+            console.error('模式名称必须是 kebab-case (如 my-workflow)');
           }
           process.exitCode = 1;
           return;
@@ -709,18 +709,18 @@ export function registerSchemaCommand(program: Command): void {
             if (options?.json) {
               console.log(JSON.stringify({
                 created: false,
-                error: `Schema '${name}' already exists`,
-                suggestion: 'Use --force to overwrite or "openspec schema fork" to copy',
+                error: `模式 '${name}' 已存在`,
+                suggestion: '使用 --force 覆盖或 "openspec schema fork" 复制',
               }, null, 2));
             } else {
-              console.error(`Error: Schema '${name}' already exists at ${schemaDir}`);
-              console.error('Use --force to overwrite or "openspec schema fork" to copy');
+              console.error(`错误: 模式 '${name}' 已存在于 ${schemaDir}`);
+              console.error('使用 --force 覆盖或 "openspec schema fork" 复制');
             }
             process.exitCode = 1;
             return;
           }
 
-          if (spinner) spinner.start(`Removing existing schema '${name}'...`);
+          if (spinner) spinner.start(`正在移除现有模式 '${name}'...`);
           fs.rmSync(schemaDir, { recursive: true });
         }
 
@@ -737,8 +737,8 @@ export function registerSchemaCommand(program: Command): void {
           const { input, checkbox, confirm } = await import('@inquirer/prompts');
 
           description = await input({
-            message: 'Schema description:',
-            default: `Custom workflow schema for ${name}`,
+            message: '模式描述:',
+            default: `${name} 的自定义工作流模式`,
           });
 
           const artifactChoices = DEFAULT_ARTIFACTS.map((a) => ({
@@ -748,12 +748,12 @@ export function registerSchemaCommand(program: Command): void {
           }));
 
           selectedArtifactIds = await checkbox({
-            message: 'Select artifacts to include:',
+            message: '选择要包含的制品:',
             choices: artifactChoices,
           });
 
           if (selectedArtifactIds.length === 0) {
-            console.error('Error: At least one artifact must be selected');
+            console.error('错误: 必须选择至少一个制品');
             process.exitCode = 1;
             return;
           }
@@ -761,7 +761,7 @@ export function registerSchemaCommand(program: Command): void {
           // Ask about setting as default (unless --no-default was passed)
           if (options?.default === undefined) {
             const setAsDefault = await confirm({
-              message: 'Set as project default schema?',
+              message: '设为项目默认模式?',
               default: false,
             });
 
@@ -771,7 +771,7 @@ export function registerSchemaCommand(program: Command): void {
           }
         } else {
           // Non-interactive mode
-          description = options?.description || `Custom workflow schema for ${name}`;
+          description = options?.description || `${name} 的自定义工作流模式`;
 
           if (options?.artifacts) {
             selectedArtifactIds = options.artifacts.split(',').map((a) => a.trim());
@@ -783,12 +783,12 @@ export function registerSchemaCommand(program: Command): void {
                 if (options?.json) {
                   console.log(JSON.stringify({
                     created: false,
-                    error: `Unknown artifact '${id}'`,
+                    error: `未知制品 '${id}'`,
                     valid: validIds,
                   }, null, 2));
                 } else {
-                  console.error(`Error: Unknown artifact '${id}'`);
-                  console.error(`Valid artifacts: ${validIds.join(', ')}`);
+                  console.error(`错误: 未知制品 '${id}'`);
+                  console.error(`有效制品: ${validIds.join(', ')}`);
                 }
                 process.exitCode = 1;
                 return;
@@ -801,7 +801,7 @@ export function registerSchemaCommand(program: Command): void {
         }
 
         // Create schema directory
-        if (spinner) spinner.start(`Creating schema '${name}'...`);
+        if (spinner) spinner.start(`正在创建模式 '${name}'...`);
         fs.mkdirSync(schemaDir, { recursive: true });
 
         // Build artifacts array with proper dependencies
@@ -886,7 +886,7 @@ export function registerSchemaCommand(program: Command): void {
           }
         }
 
-        if (spinner) spinner.succeed(`Created schema '${name}'`);
+        if (spinner) spinner.succeed(`已创建模式 '${name}'`);
 
         if (options?.json) {
           console.log(JSON.stringify({
@@ -897,18 +897,18 @@ export function registerSchemaCommand(program: Command): void {
             setAsDefault: options?.default || false,
           }, null, 2));
         } else {
-          console.log(`\nSchema created at: ${schemaDir}`);
-          console.log(`\nArtifacts: ${selectedArtifactIds.join(', ')}`);
+          console.log(`\n模式已创建于: ${schemaDir}`);
+          console.log(`\n制品: ${selectedArtifactIds.join(', ')}`);
           if (options?.default) {
-            console.log(`\nSet as project default schema.`);
+            console.log(`\n已设为项目默认模式。`);
           }
-          console.log(`\nNext steps:`);
-          console.log(`  1. Edit ${schemaDir}/schema.yaml to customize artifacts`);
-          console.log(`  2. Modify templates in the schema directory`);
-          console.log(`  3. Use with: openspec new --schema ${name}`);
+          console.log(`\n后续步骤:`);
+          console.log(`  1. 编辑 ${schemaDir}/schema.yaml 自定义制品`);
+          console.log(`  2. 修改模式目录中的模板`);
+          console.log(`  3. 使用方式: openspec new --schema ${name}`);
         }
       } catch (error) {
-        if (spinner) spinner.fail(`Creation failed`);
+        if (spinner) spinner.fail(`创建失败`);
         if (options?.json) {
           console.log(JSON.stringify({
             created: false,

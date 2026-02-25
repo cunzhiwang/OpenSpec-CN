@@ -1,5 +1,5 @@
 {
-  "name": "openspec-cn",
+  "name": "@tencent/openspec-cn",
   "version": "1.2.0",
   "description": "AI 原生的规范驱动开发系统",
   "keywords": [
